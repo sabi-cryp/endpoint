@@ -1,1 +1,37 @@
-'Bonjour, le monde!'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Information</title>
+</head>
+<body>
+
+    <h1>Client Information</h1>
+
+    <div id="clientInfo"></div>
+
+    <script>
+        // Function to fetch client information and update the HTML
+        async function fetchClientInfo(client) {
+            try {
+                const response = await fetch(`/get_endpoint/${client}`);
+                const data = await response.text();
+                
+                // Update the clientInfo div with the fetched data
+                document.getElementById('clientInfo').innerHTML = data;
+            } catch (error) {
+                console.error('Error fetching client information:', error);
+            }
+        }
+
+        // Specify the client you want to fetch information for
+        const clientToFetch = 'client1';
+
+        // Call the fetchClientInfo function
+        fetchClientInfo(clientToFetch);
+    </script>
+
+</body>
+</html>
+
