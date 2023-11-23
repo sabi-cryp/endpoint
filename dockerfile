@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Exposer le port sur lequel votre application s'exécutera
-EXPOSE 30001
+EXPOSE 80
 
 # Commande pour exécuter votre application avec le nouveau port
-CMD ["node", "index.js", "30001"]
+CMD ["node", "index.js", "80"]
