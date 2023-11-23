@@ -1,30 +1,22 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+
 const app = express();
 const port = 30001;
 
-// List of clients
-const clients = ['client1', 'client2', 'client3'];
+// Use bodyParser middleware to parse JSON requests
+app.use(bodyParser.json());
 
-// Serve the index.html file at the root endpoint
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
+// GET endpoint
+app.get('/client/:nom_client', (req, res) => {
+    const nomClient = req.params.nom_client;
+    res.send(`Endpoint for ${nomClient}: /api`);
 });
 
-// Serve an endpoint based on the client name in the URL
-app.get('/:nom_client', (req, res) => {
-    const nomClient = req.params.nom_client;
-
-    // Check if the client exists in the list
-    if (clients.includes(nomClient)) {
-        // Generate an endpoint based on the client name
-        const endpoint = `/${nomClient}/api`;
-
-        // Send a response with the generated endpoint
-        res.send(`Endpoint for ${nomClient}: ${endpoint}`);
-    } else {
-        // If the client is not in the list, send an error response
-        res.status(404).send(`Client ${nomClient} not found`);
-    }
+// POST endpoint
+app.post('/custom', (req, res) => {
+    const nomClient = req.body.nom_client;
+    res.send(`Custom functionality for ${nomClient}`);
 });
 
 // Start the server
