@@ -1,15 +1,6 @@
-version: '3.8'
+version: '3'
 
 services:
-  web:
-    build:
-      context: .
-    ports:
-      - "30001:80"
-    depends_on:
-      - db
-    command: ["npm", "start"]  # Assuming your application's start command is npm start
-
   db:
     image: mysql:8
     environment:
@@ -23,3 +14,14 @@ services:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 20s
       retries: 10
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    ports:
+      - "30001:80"
+    links:
+      - db
