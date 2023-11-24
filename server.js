@@ -4,9 +4,9 @@ const mysql = require('mysql');
 const app = express();
 const port = 30001;
 const mysqlConfig = {
-  host: '192.168.64.2', // Update with your MySQL host
-  user: 'sabrine_username', // Update with your MySQL username
-  password: 'sabrine_password', // Update with your MySQL password
+  host: 'mysql', // Assuming MySQL is the Docker service name
+  user: 'sabrine_username',
+  password: 'sabrine_password',
   database: 'mydatabase',
 };
 
@@ -44,9 +44,6 @@ pool.query(insertClientsQuery, (error, results, fields) => {
   } else {
     console.log('Clients added to the table');
   }
-
-  // Close the MySQL connection pool after adding clients
-  pool.end();
 });
 
 app.get('/client/:clientName', (req, res) => {
