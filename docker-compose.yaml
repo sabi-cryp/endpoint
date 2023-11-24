@@ -4,10 +4,10 @@ services:
     build:
       context: .
     ports:
-      - "30001:30001"
+      - "30001:80"
     depends_on:
       - mongo
   mongo:
     image: mongo:latest
     ports:
-      - "30008:27017"  # Map the host port 30008 to the container's MongoDB port 27017
+      - "30008:80"  # Map the host port 30008 to the container's MongoDB port 27017
