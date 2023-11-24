@@ -4,7 +4,7 @@ const mysql = require('mysql');
 const app = express();
 const port = 30001;
 const mysqlConfig = {
-  host: 'localhost', // Update with your MySQL host
+  host: 'db', // Update with your MySQL host
   user: 'sabrine_username', // Update with your MySQL username
   password: 'sabrine_password', // Update with your MySQL password
   database: 'mydatabase',
