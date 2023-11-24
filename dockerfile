@@ -12,7 +12,7 @@ COPY server.js .
 
 
 # Install express module
-RUN npm install express
+RUN npm install 
 
 # Expose port 30001
 EXPOSE 80
