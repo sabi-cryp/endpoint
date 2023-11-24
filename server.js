@@ -1,51 +1,68 @@
 const express = require('express');
-const mongoose = require('mongoose');
+const mysql = require('mysql');
 
 const app = express();
 const port = 30001;
-const mongoURL = 'mongodb://mongo:30008'; // Use the container name "mongo" as the hostname and the host port
-const dbName = 'mydatabase';
+const mysqlConfig = {
+  host: 'localhost', // Update with your MySQL host
+  user: 'sabrine_username', // Update with your MySQL username
+  password: 'sabrine_password', // Update with your MySQL password
+  database: 'mydatabase',
+};
 
-// Mongoose model for the "clients" collection
-const Client = mongoose.model('Client', {
-  id: Number,
-  name: String,
-  email: String,
+// MySQL connection pool
+const pool = mysql.createPool(mysqlConfig);
+
+// Create a "clients" table if it doesn't exist
+const createTableQuery = `
+  CREATE TABLE IF NOT EXISTS clients (
+    id INT PRIMARY KEY,
+    name VARCHAR(255),
+    email VARCHAR(255)
+  )
+`;
+
+pool.query(createTableQuery, (error, results, fields) => {
+  if (error) {
+    console.error('Error creating table:', error);
+  } else {
+    console.log('Table "clients" created or already exists');
+  }
 });
 
-// Connect to MongoDB
-mongoose.connect(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true });
+// Add clients to the "clients" table
+const insertClientsQuery = `
+  INSERT INTO clients (id, name, email) VALUES
+  (1, 'Sabrine', 'sabrine@example.com'),
+  (2, 'Aymen', 'aymen@example.com'),
+  (3, 'Mehdi', 'mehdi@example.com')
+`;
 
-// Add clients to the "clients" collection
-const sabrine = new Client({ id: 1, name: 'Sabrine', email: 'sabrine@example.com' });
-const aymen = new Client({ id: 2, name: 'Aymen', email: 'aymen@example.com' });
-const jan = new Client({ id: 3, name: 'mehdi', email: 'mehdi@example.com' });
-
-// Save clients to the database
-Promise.all([sabrine.save(), aymen.save(), jan.save()])
-  .then(() => {
-    console.log('Clients added to the database');
-  })
-  .catch((error) => {
+pool.query(insertClientsQuery, (error, results, fields) => {
+  if (error) {
     console.error('Error adding clients:', error);
-  })
-  .finally(() => {
-    // Disconnect from MongoDB after adding clients
-    mongoose.connection.close();
-  });
+  } else {
+    console.log('Clients added to the table');
+  }
 
-app.get('/client/:clientName', async (req, res) => {
+  // Close the MySQL connection pool after adding clients
+  pool.end();
+});
+
+app.get('/client/:clientName', (req, res) => {
   const clientName = req.params.clientName;
 
-  try {
-    // Find the client in the database
-    const clientData = await Client.findOne({ name: clientName });
+  // Find the client in the "clients" table
+  const selectClientQuery = 'SELECT * FROM clients WHERE name = ?';
 
-    if (clientData) {
-      // Generate the dynamic endpoint based on the client's name
+  pool.query(selectClientQuery, [clientName], (error, results, fields) => {
+    if (error) {
+      console.error('Error querying client:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else if (results.length > 0) {
+      const clientData = results[0];
       const dynamicEndpoint = `http://10.10.204.7:30001/client/${clientData.name}`;
 
-      // Include the dynamic endpoint in the response
       res.json({
         id: clientData.id,
         name: clientData.name,
@@ -55,10 +72,7 @@ app.get('/client/:clientName', async (req, res) => {
     } else {
       res.status(404).json({ error: 'Client not found' });
     }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
+  });
 });
 
 app.listen(port, () => {
