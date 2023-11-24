@@ -1,0 +1,13 @@
+version: '3'
+services:
+  web:
+    build:
+      context: .
+    ports:
+      - "30001:30001"
+    depends_on:
+      - mongo
+  mongo:
+    image: mongo:latest
+    ports:
+      - "30008:27017"  # Map the host port 30008 to the container's MongoDB port 27017
