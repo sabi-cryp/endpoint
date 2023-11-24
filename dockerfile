@@ -13,7 +13,8 @@ COPY . .
 
 # Install express module
 RUN npm install 
-
+RUN npm install mongodb
+RUN npm install express
 # Expose port 30001
 EXPOSE 80
 
