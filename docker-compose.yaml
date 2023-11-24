@@ -1,4 +1,5 @@
-version: '3'
+version: '3.8'
+
 services:
   web:
     build:
@@ -6,8 +7,14 @@ services:
     ports:
       - "30001:80"
     depends_on:
-      - mongo
-  mongo:
-    image: mongo:latest
+      - db
+
+  db:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: your_mysql_root_password
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: sabrine_username
+      MYSQL_PASSWORD: sabrine_password
     ports:
-      - "30008:80"  # Map the host port 30008 to the container's MongoDB port 27017
+      - "3306:3306"
