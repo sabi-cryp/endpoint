@@ -8,7 +8,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Copy the server.js and index.html to the working directory
-COPY server.js .
+COPY . .
 
 
 # Install express module
